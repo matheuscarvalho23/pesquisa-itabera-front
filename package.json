@@ -14,11 +14,15 @@
   },
   "dependencies": {
     "@tabler/icons-vue": "^3.17.0",
+    "@types/yup": "^0.32.0",
+    "@vee-validate/yup": "^4.13.2",
     "axios": "^1.7.7",
     "pinia": "^2.1.7",
     "remove": "^0.1.5",
+    "vee-validate": "^4.13.2",
     "vue": "^3.4.29",
-    "vue-toast-notification": "^3.1.2"
+    "vue-toast-notification": "^3.1.2",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",

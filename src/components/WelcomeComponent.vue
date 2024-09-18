@@ -8,7 +8,14 @@
       <h2>Seja bem vindo (a) a pesquisa de candidatos em Itaberá SP</h2>
       <h3>Informe seu e-mail para realizar a pesquisa.</h3>
 
-      <input v-model="email" type="email" placeholder="Insira seu e-mail" />
+      <input v-model="email" type="email" placeholder="Insira seu e-mail" v-bind="emailAttrs" />
+      <div class="errors">
+        <span>{{ errors.email }}</span>
+      </div>
+
+      <span>ou</span>
+
+      <button type="button" @click="emit('openResultsModal')">Ver resultados</button>
     </div>
   </div>
 
@@ -17,8 +24,8 @@
       <div class="footer-component">
         <button
           type="button"
-          :disabled="!email"
-          :class="{ 'is-disabled': !email }"
+          :disabled="verifyEmail()"
+          :class="{ 'is-disabled': !email || errors.email }"
           @click="handleNextStep"
         >
           Continuar
@@ -31,16 +38,34 @@
 <script setup lang="ts">
 import FooterComponent from './FooterComponent.vue'
 import { useEmailStore } from '@/stores/user'
-import { ref, defineEmits } from 'vue'
+import { useForm } from 'vee-validate'
+import { defineEmits } from 'vue'
+import * as yup from 'yup'
 
-const emit = defineEmits(['handleNextStep'])
-const email = ref('')
+const emit = defineEmits(['handleNextStep', 'openResultsModal'])
 const emailStore = useEmailStore()
 
+const { errors, defineField } = useForm({
+  validationSchema: yup.object({
+    email: yup.string().email('E-mail inválido').required('E-mail obrigatório')
+  })
+})
+
+const [email, emailAttrs] = defineField('email')
+
 function handleNextStep() {
-  emailStore.setEmail(email.value)
-  localStorage.setItem('email', email.value)
-  emit('handleNextStep')
+  if (!errors.value.email) {
+    emailStore.setEmail(email.value)
+    localStorage.setItem('email', email.value)
+    emit('handleNextStep')
+  }
+}
+
+function verifyEmail() {
+  if (!email.value || errors.value.email) {
+    return true
+  }
+  return false
 }
 </script>
 
@@ -73,6 +98,29 @@ function handleNextStep() {
       padding: 5px;
       font-size: medium;
       background: transparent;
+    }
+
+    .errors {
+      position: relative;
+      span {
+        color: red;
+        font-size: 15px;
+      }
+    }
+
+    span {
+      margin: 20px 0;
+    }
+
+    button {
+      width: 100%;
+      height: 45px;
+      border: 0;
+      background: #317d5b;
+      color: #fff;
+      font-size: 18px;
+      border-radius: 4px;
+      cursor: pointer;
     }
   }
 }

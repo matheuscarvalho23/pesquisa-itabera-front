@@ -1,5 +1,9 @@
 <template>
-  <WelcomeComponent v-if="!isEmail" @handleNextStep="getRegisterEmail" />
+  <WelcomeComponent
+    v-if="!isEmail"
+    @handleNextStep="getRegisterEmail"
+    @openResultsModal="showModal = true"
+  />
   <CandidateInfo v-if="isEmail" :candidateInfo="candidate" :user-voted="userVoted" />
 
   <FooterComponent v-if="isEmail">
@@ -131,7 +135,7 @@ async function handleVote(candidate: ICandidateModel) {
       duration: 3000
     })
   } catch (error) {
-    console.log(error)
+    userVoted.value = true
 
     toast.error('Não é possível votar mais de uma vez !', {
       position: 'top',
